@@ -1,0 +1,195 @@
+title: Automate Your Puppet Boilerplate
+subtitle: Skeletons FTW
+author: Jay Farschman
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Note: Use the `--h2` option to break up slides on heading level 2   %%
+%% (the default is `--h1`, that is, heading level 1).                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+## Automate Your Puppet Boilerplate
+
+    Puppetlabs have put alot of effort into helping us 
+    build standardized modules including an overhaul of
+    the http://forge.puppetlabs.com
+
+    Part of that is encouraging the grassroots puppet
+    developers to follow a set of standards that can
+    best be described at a boilerplate
+
+## Defined: Boilerplate
+
+    A boilerplate is a unit of writing that can be reused 
+    over and over without change.
+
+
+
+## I got this, it's BASH
+
+Frankly, there are lots of steps that just don't seem important
+to everyone so they generally aren't all followed.
+
+    $ mkdir -p newmodulename/{manifests,files,templates,spec}
+    $ cd newmodulename
+    $ touch manifests/{init,install,config,service}.pp
+    $ mkdir -p spec/{classes,define,acceptance}
+    $ touch spec/classes/modulename_spec.rb
+    $ touch spec/classes/modulename_{install,config,service}_spec.rb
+    $ touch .gitignore CHANGELOG LICENSE .fixtures.yml README.markdown 
+    $ touch .tavis.yml metadata.json GEMfile Rakefile
+
+
+But now my files are all empty, maybe I should have copied some of this
+from a module that is perfect?
+
+## Hmmm, Maybe not...
+
+- Will your whole team know what to do?
+- Will you remember how to do it in 4 months?
+- Will the inconsistencies bother you?
+- What about evolving best practices?
+
+
+## Module Generate - Default
+
+    > puppet module generate jfarschman-default
+
+    We need to create a metadata.json file for this module.  Please answer the
+    following questions; if the question is not applicable to this module, feel free
+    to leave it blank.
+
+    Puppet uses Semantic Versioning (semver.org) to version modules.
+    What version is this module?  [1.0.0]
+    --> 
+
+    Who wrote this module?  [jfarschman]
+    --> 
+
+    What license does this module code fall under?  [Apache 2.0]
+    --> 
+
+    How would you describe this module in a single sentence?
+    --> This is the default module for testing module generation.
+
+    etc... 
+
+!SLIDE commandline
+
+     Where is this module's source code repository?
+     --> https://github.com/jfarschman/jfarschman-default
+
+     Where can others go to learn more about this module?  [https://github.com/jfarschman/jfarschman-default]
+     --> 
+
+     Where can others go to file issues about this module?  [https://github.com/jfarschman/jfarschman-default/issues]
+     --> 
+
+     ----------------------------------------
+     {
+       "name": "jfarschman-default",
+       "version": "1.0.0",
+       "author": "jfarschman",
+       "summary": "This is the default module for testing module generation.",
+       "license": "Apache 2.0",
+       "source": "https://github.com/jfarschman/jfarschman-default",
+       "project_page": "https://github.com/jfarschman/jfarschman-default",
+       "issues_url": "https://github.com/jfarschman/jfarschman-default/issues",
+       "dependencies": [
+         {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+       ]
+     }
+     ----------------------------------------
+
+     About to generate this metadata; continue? [n/Y]
+     -->
+
+## So, Why don't we like the default?
+
+## Answer: It has evoloved.
+
+- Incorporating Tests (rspec-puppet)
+- Style Compliant (puppet-lint)
+- Input Validation (stdlib module)
+
+
+## rspec-puppet - Testing
+
+rspec-puppet provide the rspec-puppet-init binary to help 
+you getting started with. Simply run rspec-puppet-init at
+the root of your module and a bunch of directory will be 
+created under your spec/ folder.
+
+## Puppet-lint - Style
+
+The PuppetLabs Style Guide provides some best practices
+for style to make your code readable to others.  Every
+community needs style practices so that we can share and
+get assistance.
+
+## Input Validation
+Strange user inputs can make troubleshooting difficult.
+puppetlabs/stdlib can provide data validation:
+
+- validate_array
+- validate_bool
+- validate_hash
+- validate_string
+
+
+
+
+## Let's Checkout Gareth's Module
+Puppet `generate` will look in your home directory 
+`~/.puppet/var/puppet-module/skeleton` to find any modifications.
+
+    git clone https://github.com/garethr/puppet-module-skeleton
+    cd puppet-module-skeleton
+    find skeleton -type f | git checkout-index --stdin \
+       --force --prefix="$HOME/.puppet/var/puppet-module/" --
+
+
+## Module Generate - Skeleton
+
+    > puppet module generate ping-skeleton
+
+    - Now it reads from the ~/.puppet/var/puppet-module/skeleton 
+    dir which we can modify as needed.
+
+    - Warning: If you work as root the skeleton path is different 
+    and will pull from /etc/puppet/modules/
+
+
+## But I don't like what's generated
+
+- Add any file you require into new modules
+- Templates are named with an .erb extension
+- Templates drop the .erb extenstion when placed
+
+
+## Example File init.pp.erb
+
+The power of Ruby templates
+
+<%= code 'init.pp.erb' %>
+
+## What variables are available?
+
+    meta-data.full_module_name
+    meta-data.version
+    meta-data.author
+    meta-data.summary
+    meta-data.license
+    meta-data.source
+    meta-data.project_page
+    meta-data.issues_url
+
+These are recognizeable from the questions you answered when running
+puppet module generate ping-modulename
+
+## As and Example - Documenting Modules
+
+    Will have an example here of how to do modify README.markdown
+
+## Continued...
+
+or is it the end?
